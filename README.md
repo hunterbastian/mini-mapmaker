@@ -30,6 +30,5 @@ npm test
 
 ## Deployment
 
-- Vercel production URL: `TBD`
+- Vercel production URL: `https://mini-mapmaker-hunterbastians-projects.vercel.app`
 - Vercel preview deploys: enabled via GitHub integration
-
