@@ -17,7 +17,7 @@ export default function ExportButton({ target }: ExportButtonProps) {
       const dataUrl = await toPng(target, {
         cacheBust: true,
         pixelRatio: 2,
-        backgroundColor: "#f1e8d7",
+        backgroundColor: "#05070d",
       });
       const link = document.createElement("a");
       link.download = "cartographer-map.png";

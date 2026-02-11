@@ -31,7 +31,7 @@ type TilePaletteProps = {
 
 export default function TilePalette({ selectedTerrain, onSelectTerrain }: TilePaletteProps) {
   return (
-    <section className="panel sidebar">
+    <section className="sidebar">
       <div className="panel-title">Terrain Library</div>
       <div className="tile-grid">
         {tiles.map((tile) => (
@@ -43,7 +43,7 @@ export default function TilePalette({ selectedTerrain, onSelectTerrain }: TilePa
           />
         ))}
       </div>
-      <div className="legend">Select terrain, then paint onto the grid.</div>
+      <div className="legend">Select terrain and paint live on the matrix.</div>
     </section>
   );
 }

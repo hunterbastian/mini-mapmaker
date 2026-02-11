@@ -56,6 +56,10 @@ export default function HomePage() {
   const applyValue = tool === "erase" ? null : selectedTerrain;
   const canUndo = history.past.length > 0;
   const canRedo = history.future.length > 0;
+  const paintedCells = useMemo(
+    () => history.present.reduce((count, cell) => (cell ? count + 1 : count), 0),
+    [history.present]
+  );
 
   const paintCell = useCallback(
     (index: number, connectFrom: number | null) => {
@@ -184,23 +188,79 @@ export default function HomePage() {
   return (
     <main>
       <div className="app-shell">
-        <header className="top-bar panel">
-          <div>
-            <div className="title">Cartographer</div>
-            <div className="title-sub">Mini Fantasy Map Studio</div>
+        <header className="top-bar">
+          <div className="top-nav-cluster">
+            <button type="button" className="orb-button" aria-label="Open tactical menu">
+              <span />
+              <span />
+              <span />
+            </button>
+
+            <div className="segment-track" role="tablist" aria-label="Map scope">
+              <button type="button" className="segment-pill">
+                World
+              </button>
+              <button type="button" className="segment-pill active">
+                Region
+              </button>
+              <button type="button" className="segment-pill">
+                Local
+              </button>
+            </div>
           </div>
-          <ExportButton target={mapRef.current} />
+
+          <div className="top-nav-cluster">
+            <span className="status-pill">Safehouse Active</span>
+            <ExportButton target={mapRef.current} />
+          </div>
         </header>
 
         <div className="layout">
-          <TilePalette selectedTerrain={selectedTerrain} onSelectTerrain={setSelectedTerrain} />
-
           <section className="panel map-shell">
             <div className="map-meta">
               <span>
-                Grid {projectMeta.width} x {projectMeta.height}
+                Sector Matrix {projectMeta.width} x {projectMeta.height}
               </span>
-              <span>{tool === "paint" ? "Paint mode" : "Erase mode"}</span>
+              <span>{paintedCells} cells online</span>
+            </div>
+
+            <MapGrid
+              width={projectMeta.width}
+              height={projectMeta.height}
+              cellSize={CELL_SIZE}
+              cells={history.present}
+              onCellPointerDown={handleCellPointerDown}
+              onCellPointerEnter={handleCellPointerEnter}
+              onGridPointerUp={stopPainting}
+              onGridPointerLeave={stopPainting}
+              mapRef={mapRef}
+            />
+          </section>
+
+          <section className="panel command-shell">
+            <div className="sector-head">
+              <div>
+                <h1 className="sector-title">Sector 7: Industrial</h1>
+                <p className="sector-subtitle">Contested Zone • 4m walk</p>
+              </div>
+              <span className="sector-badge">{tool === "paint" ? "Paint Mode" : "Erase Mode"}</span>
+            </div>
+
+            <div className="intel-grid">
+              <div className="intel-card">
+                <div className="intel-label">Tiles Placed</div>
+                <div className="intel-value">{paintedCells}</div>
+              </div>
+              <div className="intel-card">
+                <div className="intel-label">Selected Terrain</div>
+                <div className="intel-value">{selectedTerrain}</div>
+              </div>
+              <div className="intel-card">
+                <div className="intel-label">History</div>
+                <div className="intel-value">
+                  {history.past.length}/{history.past.length + history.future.length}
+                </div>
+              </div>
             </div>
 
             <EditorToolbar
@@ -214,18 +274,7 @@ export default function HomePage() {
             />
 
             <ProjectIO project={project} onImportProject={handleImportProject} />
-
-            <MapGrid
-              width={projectMeta.width}
-              height={projectMeta.height}
-              cellSize={CELL_SIZE}
-              cells={history.present}
-              onCellPointerDown={handleCellPointerDown}
-              onCellPointerEnter={handleCellPointerEnter}
-              onGridPointerUp={stopPainting}
-              onGridPointerLeave={stopPainting}
-              mapRef={mapRef}
-            />
+            <TilePalette selectedTerrain={selectedTerrain} onSelectTerrain={setSelectedTerrain} />
           </section>
         </div>
       </div>
