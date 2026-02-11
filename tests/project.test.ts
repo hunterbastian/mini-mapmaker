@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import {
   createEmptyProject,
   createHistory,
+  paintBrush,
+  paintBrushLine,
   paintLine,
   parseProject,
   pushHistory,
@@ -32,6 +34,25 @@ test("paintLine paints path between indices", () => {
   assert.equal(next[5], "water");
   assert.equal(next[10], "water");
   assert.equal(next[15], "water");
+});
+
+test("paintBrush paints a circular area around target cell", () => {
+  const start = Array.from({ length: 25 }, () => null);
+  const next = paintBrush(start, 12, "forest", 5, 1);
+  assert.equal(next[12], "forest");
+  assert.equal(next[7], "forest");
+  assert.equal(next[11], "forest");
+  assert.equal(next[13], "forest");
+  assert.equal(next[17], "forest");
+});
+
+test("paintBrushLine paints along drag path with brush radius", () => {
+  const start = Array.from({ length: 25 }, () => null);
+  const next = paintBrushLine(start, 0, 24, "grass", 5, 1);
+  assert.equal(next[0], "grass");
+  assert.equal(next[6], "grass");
+  assert.equal(next[12], "grass");
+  assert.equal(next[24], "grass");
 });
 
 test("undo and redo move through history", () => {

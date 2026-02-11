@@ -43,7 +43,7 @@ export default function TilePalette({ selectedTerrain, onSelectTerrain }: TilePa
           />
         ))}
       </div>
-      <div className="legend">Select terrain and paint live on the matrix.</div>
+      <div className="legend">Select terrain, then paint or brush onto the matrix.</div>
     </section>
   );
 }

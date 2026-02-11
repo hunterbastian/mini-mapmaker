@@ -3,7 +3,7 @@ const HISTORY_LIMIT = 100;
 
 export type TerrainId = "grass" | "water" | "mountain" | "forest";
 export type CellValue = TerrainId | null;
-export type EditorTool = "paint" | "erase";
+export type EditorTool = "paint" | "brush" | "erase";
 
 export type MapProjectV1 = {
   version: 1;
@@ -95,6 +95,86 @@ export function paintLine(
       break;
     }
 
+    const e2 = err * 2;
+    if (e2 > -dy) {
+      err -= dy;
+      x += sx;
+    }
+    if (e2 < dx) {
+      err += dx;
+      y += sy;
+    }
+  }
+
+  return next;
+}
+
+export function paintBrush(
+  cells: CellValue[],
+  centerIndex: number,
+  value: CellValue,
+  width: number,
+  radius: number
+): CellValue[] {
+  if (radius <= 0) {
+    return setCell(cells, centerIndex, value);
+  }
+
+  const height = Math.ceil(cells.length / width);
+  const centerX = centerIndex % width;
+  const centerY = Math.floor(centerIndex / width);
+  let next = cells;
+
+  for (let y = centerY - radius; y <= centerY + radius; y += 1) {
+    if (y < 0 || y >= height) {
+      continue;
+    }
+    for (let x = centerX - radius; x <= centerX + radius; x += 1) {
+      if (x < 0 || x >= width) {
+        continue;
+      }
+      const dx = x - centerX;
+      const dy = y - centerY;
+      if (dx * dx + dy * dy > radius * radius) {
+        continue;
+      }
+      next = setCell(next, y * width + x, value);
+    }
+  }
+
+  return next;
+}
+
+export function paintBrushLine(
+  cells: CellValue[],
+  fromIndex: number,
+  toIndex: number,
+  value: CellValue,
+  width: number,
+  radius: number
+): CellValue[] {
+  const height = Math.ceil(cells.length / width);
+  const startX = fromIndex % width;
+  const startY = Math.floor(fromIndex / width);
+  const endX = toIndex % width;
+  const endY = Math.floor(toIndex / width);
+
+  let x = startX;
+  let y = startY;
+  const dx = Math.abs(endX - startX);
+  const dy = Math.abs(endY - startY);
+  const sx = startX < endX ? 1 : -1;
+  const sy = startY < endY ? 1 : -1;
+  let err = dx - dy;
+  let next = cells;
+
+  while (true) {
+    if (x >= 0 && x < width && y >= 0 && y < height) {
+      next = paintBrush(next, y * width + x, value, width, radius);
+    }
+    if (x === endX && y === endY) {
+      break;
+    }
     const e2 = err * 2;
     if (e2 > -dy) {
       err -= dy;

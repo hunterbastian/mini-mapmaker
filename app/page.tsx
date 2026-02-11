@@ -13,6 +13,8 @@ import {
   EditorTool,
   HistoryState,
   MapProjectV1,
+  paintBrush,
+  paintBrushLine,
   paintLine,
   pushHistory,
   redoHistory,
@@ -37,6 +39,7 @@ export default function HomePage() {
     return createHistory(seed.cells);
   });
   const [tool, setTool] = useState<EditorTool>("paint");
+  const [brushSize, setBrushSize] = useState(2);
   const [selectedTerrain, setSelectedTerrain] = useState<TerrainId>(DEFAULT_TERRAIN);
   const mapRef = useRef<HTMLDivElement | null>(null);
   const isPaintingRef = useRef(false);
@@ -54,6 +57,7 @@ export default function HomePage() {
   );
 
   const applyValue = tool === "erase" ? null : selectedTerrain;
+  const brushRadius = Math.max(0, brushSize - 1);
   const canUndo = history.past.length > 0;
   const canRedo = history.future.length > 0;
   const paintedCells = useMemo(
@@ -69,15 +73,24 @@ export default function HomePage() {
 
       setHistory((prev) => {
         let nextCells = prev.present;
-        if (connectFrom === null) {
-          nextCells = setCell(nextCells, index, applyValue);
+
+        if (tool === "brush") {
+          if (connectFrom === null) {
+            nextCells = paintBrush(nextCells, index, applyValue, projectMeta.width, brushRadius);
+          } else {
+            nextCells = paintBrushLine(nextCells, connectFrom, index, applyValue, projectMeta.width, brushRadius);
+          }
         } else {
-          nextCells = paintLine(nextCells, connectFrom, index, applyValue, projectMeta.width);
+          if (connectFrom === null) {
+            nextCells = setCell(nextCells, index, applyValue);
+          } else {
+            nextCells = paintLine(nextCells, connectFrom, index, applyValue, projectMeta.width);
+          }
         }
         return pushHistory(prev, nextCells);
       });
     },
-    [applyValue, projectMeta.height, projectMeta.width]
+    [applyValue, brushRadius, projectMeta.height, projectMeta.width, tool]
   );
 
   const handleCellPointerDown = useCallback(
@@ -173,8 +186,11 @@ export default function HomePage() {
         return;
       }
 
-      if (event.key.toLowerCase() === "b") {
+      if (event.key.toLowerCase() === "p") {
         setTool("paint");
+      }
+      if (event.key.toLowerCase() === "b") {
+        setTool("brush");
       }
       if (event.key.toLowerCase() === "e") {
         setTool("erase");
@@ -228,20 +244,25 @@ export default function HomePage() {
                 <h1 className="sector-title">Quiet Controls</h1>
                 <p className="sector-subtitle">low signal mode • local autosave</p>
               </div>
-              <span className="sector-badge">{tool === "paint" ? "Paint" : "Erase"}</span>
+              <span className="sector-badge">
+                {tool === "paint" ? "Paint" : tool === "brush" ? `Brush ${brushSize}` : "Erase"}
+              </span>
             </div>
 
             <div className="intel-strip" aria-label="Editor telemetry">
               <span>terrain {selectedTerrain}</span>
               <span>history {history.past.length}</span>
               <span>cells {paintedCells}</span>
+              <span>brush {brushSize}</span>
             </div>
 
             <EditorToolbar
               tool={tool}
+              brushSize={brushSize}
               canUndo={canUndo}
               canRedo={canRedo}
               onSetTool={setTool}
+              onSetBrushSize={setBrushSize}
               onUndo={handleUndo}
               onRedo={handleRedo}
               onClear={handleClear}
