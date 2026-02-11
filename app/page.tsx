@@ -190,12 +190,12 @@ export default function HomePage() {
       <div className="app-shell">
         <header className="top-bar">
           <div className="brand-block">
-            <div className="brand-title">OUTPOST MAP</div>
-            <div className="brand-subtitle">Ambient cartography console</div>
+            <div className="brand-title">Outpost // Mapping</div>
+            <div className="brand-subtitle">ambient cartography console</div>
           </div>
 
           <div className="header-tools">
-            <span className="status-chip">online</span>
+            <span className="status-chip">link stable</span>
             <ExportButton target={mapRef.current} />
           </div>
         </header>
@@ -225,8 +225,8 @@ export default function HomePage() {
           <section className="panel command-shell">
             <div className="sector-head">
               <div>
-                <h1 className="sector-title">Outpost Controls</h1>
-                <p className="sector-subtitle">Silent mode • local autosave</p>
+                <h1 className="sector-title">Quiet Controls</h1>
+                <p className="sector-subtitle">low signal mode • local autosave</p>
               </div>
               <span className="sector-badge">{tool === "paint" ? "Paint" : "Erase"}</span>
             </div>
