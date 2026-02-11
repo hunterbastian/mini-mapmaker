@@ -190,13 +190,12 @@ export default function HomePage() {
       <div className="app-shell">
         <header className="top-bar">
           <div className="brand-block">
-            <div className="brand-title">MINI MAPMAKER</div>
-            <div className="brand-subtitle">Brutalist Dark Editor</div>
+            <div className="brand-title">OUTPOST MAP</div>
+            <div className="brand-subtitle">Ambient cartography console</div>
           </div>
 
           <div className="header-tools">
-            <span className="status-chip">cells {paintedCells}</span>
-            <span className="status-chip">mode {tool}</span>
+            <span className="status-chip">online</span>
             <ExportButton target={mapRef.current} />
           </div>
         </header>
@@ -205,9 +204,9 @@ export default function HomePage() {
           <section className="panel map-shell">
             <div className="map-meta">
               <span>
-                Sector Matrix {projectMeta.width} x {projectMeta.height}
+                Grid {projectMeta.width} x {projectMeta.height}
               </span>
-              <span>{paintedCells} cells online</span>
+              <span>{paintedCells} active</span>
             </div>
 
             <MapGrid
@@ -226,27 +225,16 @@ export default function HomePage() {
           <section className="panel command-shell">
             <div className="sector-head">
               <div>
-                <h1 className="sector-title">CONTROL PANEL</h1>
-                <p className="sector-subtitle">Local autosave enabled</p>
+                <h1 className="sector-title">Outpost Controls</h1>
+                <p className="sector-subtitle">Silent mode • local autosave</p>
               </div>
               <span className="sector-badge">{tool === "paint" ? "Paint" : "Erase"}</span>
             </div>
 
-            <div className="intel-grid">
-              <div className="intel-card">
-                <div className="intel-label">Tiles Placed</div>
-                <div className="intel-value">{paintedCells}</div>
-              </div>
-              <div className="intel-card">
-                <div className="intel-label">Selected Terrain</div>
-                <div className="intel-value">{selectedTerrain}</div>
-              </div>
-              <div className="intel-card">
-                <div className="intel-label">History</div>
-                <div className="intel-value">
-                  {history.past.length}/{history.past.length + history.future.length}
-                </div>
-              </div>
+            <div className="intel-strip" aria-label="Editor telemetry">
+              <span>terrain {selectedTerrain}</span>
+              <span>history {history.past.length}</span>
+              <span>cells {paintedCells}</span>
             </div>
 
             <EditorToolbar
