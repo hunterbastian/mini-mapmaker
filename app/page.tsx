@@ -189,28 +189,14 @@ export default function HomePage() {
     <main>
       <div className="app-shell">
         <header className="top-bar">
-          <div className="top-nav-cluster">
-            <button type="button" className="orb-button" aria-label="Open tactical menu">
-              <span />
-              <span />
-              <span />
-            </button>
-
-            <div className="segment-track" role="tablist" aria-label="Map scope">
-              <button type="button" className="segment-pill">
-                World
-              </button>
-              <button type="button" className="segment-pill active">
-                Region
-              </button>
-              <button type="button" className="segment-pill">
-                Local
-              </button>
-            </div>
+          <div className="brand-block">
+            <div className="brand-title">MINI MAPMAKER</div>
+            <div className="brand-subtitle">Brutalist Dark Editor</div>
           </div>
 
-          <div className="top-nav-cluster">
-            <span className="status-pill">Safehouse Active</span>
+          <div className="header-tools">
+            <span className="status-chip">cells {paintedCells}</span>
+            <span className="status-chip">mode {tool}</span>
             <ExportButton target={mapRef.current} />
           </div>
         </header>
@@ -240,10 +226,10 @@ export default function HomePage() {
           <section className="panel command-shell">
             <div className="sector-head">
               <div>
-                <h1 className="sector-title">Sector 7: Industrial</h1>
-                <p className="sector-subtitle">Contested Zone • 4m walk</p>
+                <h1 className="sector-title">CONTROL PANEL</h1>
+                <p className="sector-subtitle">Local autosave enabled</p>
               </div>
-              <span className="sector-badge">{tool === "paint" ? "Paint Mode" : "Erase Mode"}</span>
+              <span className="sector-badge">{tool === "paint" ? "Paint" : "Erase"}</span>
             </div>
 
             <div className="intel-grid">
